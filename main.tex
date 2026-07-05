@@ -1,0 +1,387 @@
+\documentclass[11pt]{article}
+
+% ------------------------------------------------------------
+% Packages
+% ------------------------------------------------------------
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{physics}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+
+% ------------------------------------------------------------
+% Formatting
+% ------------------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+\onehalfspacing
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Lee Cheuk Man Gerard}
+\lhead{Vlasov--Maxwell Aurora Report}
+\cfoot{\thepage}
+
+% ------------------------------------------------------------
+% Title
+% ------------------------------------------------------------
+\title{\textbf{A Mathematical Report on the Vlasov--Maxwell System and Auroral Dynamics}}
+\author{Lee Cheuk Man Gerard}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report presents a mathematical and physical overview of the Vlasov--Maxwell system as a kinetic model for collisionless plasmas, with emphasis on auroral phenomena and the northern lights. The discussion is motivated by a computational visualization script that generates two-dimensional and three-dimensional animations of plasma dynamics, magnetospheric structure, and auroral emission. The report derives the governing equations, explains the role of distribution functions and electromagnetic self-consistency, and connects the model to the Earth's magnetosphere, field-aligned particle motion, and optical auroral displays. Key geometric features such as magnetic dipole field lines, auroral ovals, and rotating 3D renderings are interpreted mathematically. The work also includes a brief discussion of modeling assumptions, numerical visualization choices, and limitations.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ------------------------------------------------------------
+\section{Introduction}
+Aurorae, commonly known as the northern lights or \emph{aurora borealis}, arise from the interaction between charged particles from the solar wind and the Earth's magnetosphere and upper atmosphere. Energetic electrons and ions guided by geomagnetic field lines excite atmospheric constituents, producing visible emissions that are often observed near the polar regions.
+
+From the perspective of plasma physics, the auroral environment is a weakly collisional, magnetized plasma. In such a regime, the kinetic description is often more appropriate than a fluid description. The Vlasov--Maxwell system provides a self-consistent model for the evolution of particle distribution functions under the action of electromagnetic fields. It is therefore a natural mathematical framework for studying auroral dynamics, magnetospheric structure, and field-aligned transport.
+
+The accompanying Python script generates stylized visualizations of:
+\begin{itemize}
+    \item a Vlasov--Maxwell-inspired plasma evolution plot,
+    \item auroral emission represented by colored particle clouds,
+    \item a 3D magnetosphere with dipole field lines,
+    \item a rotating Earth-centered auroral structure,
+    \item poster images and animated GIFs for presentation.
+\end{itemize}
+This report formalizes the underlying mathematics and interprets the graphics in terms of plasma kinetic theory.
+
+% ------------------------------------------------------------
+\section{The Vlasov--Maxwell System}
+
+\subsection{Distribution function}
+Let
+\[
+f_s = f_s(t,\bm{x},\bm{v})
+\]
+denote the distribution function of species \(s\) at time \(t\), position \(\bm{x}\in\mathbb{R}^3\), and velocity \(\bm{v}\in\mathbb{R}^3\). The quantity
+\[
+f_s(t,\bm{x},\bm{v})\,d^3x\,d^3v
+\]
+represents the number of particles of species \(s\) in a phase-space volume element.
+
+The number density and bulk velocity are given by
+\[
+n_s(t,\bm{x}) = \int_{\mathbb{R}^3} f_s(t,\bm{x},\bm{v})\,d^3v,
+\]
+\[
+\bm{u}_s(t,\bm{x}) = \frac{1}{n_s}\int_{\mathbb{R}^3}\bm{v} f_s(t,\bm{x},\bm{v})\,d^3v.
+\]
+
+\subsection{Vlasov equation}
+For a collisionless plasma, each species satisfies
+\begin{equation}
+\frac{\partial f_s}{\partial t}
++ \bm{v}\cdot\nabla_{\bm{x}} f_s
++ \frac{q_s}{m_s}\left(\bm{E} + \bm{v}\times \bm{B}\right)\cdot\nabla_{\bm{v}} f_s
+= 0,
+\label{eq:vlasov}
+\end{equation}
+where \(q_s\) and \(m_s\) are the charge and mass of species \(s\), and \(\bm{E}\) and \(\bm{B}\) are the electric and magnetic fields.
+
+Equation \eqref{eq:vlasov} expresses conservation of phase-space density along characteristics. The corresponding characteristic system is
+\begin{equation}
+\frac{d\bm{x}}{dt} = \bm{v}, \qquad
+\frac{d\bm{v}}{dt} = \frac{q_s}{m_s}\left(\bm{E} + \bm{v}\times \bm{B}\right).
+\label{eq:characteristics}
+\end{equation}
+
+\subsection{Maxwell's equations}
+The electromagnetic fields are determined self-consistently by Maxwell's equations:
+\begin{align}
+\nabla \cdot \bm{E} &= \frac{\rho}{\varepsilon_0}, \\
+\nabla \cdot \bm{B} &= 0, \\
+\nabla \times \bm{E} &= -\frac{\partial \bm{B}}{\partial t}, \\
+\nabla \times \bm{B} &= \mu_0 \bm{J} + \mu_0 \varepsilon_0 \frac{\partial \bm{E}}{\partial t}.
+\end{align}
+The charge density \(\rho\) and current density \(\bm{J}\) are obtained from the distribution functions:
+\begin{equation}
+\rho(t,\bm{x}) = \sum_s q_s \int_{\mathbb{R}^3} f_s(t,\bm{x},\bm{v})\,d^3v,
+\end{equation}
+\begin{equation}
+\bm{J}(t,\bm{x}) = \sum_s q_s \int_{\mathbb{R}^3} \bm{v} f_s(t,\bm{x},\bm{v})\,d^3v.
+\end{equation}
+
+Thus, the Vlasov--Maxwell system is nonlinear: the particle distribution determines the fields, and the fields in turn govern the distribution.
+
+% ------------------------------------------------------------
+\section{Physical Setting of the Auroral Plasma}
+
+\subsection{Magnetosphere and dipole geometry}
+The Earth's magnetic field may be approximated at large scale by a dipole field. In spherical coordinates \((r,\theta,\phi)\), the ideal dipole field has the form
+\begin{equation}
+\bm{B}(r,\theta)
+=
+\frac{B_0 R_E^3}{r^3}
+\left(
+2\cos\theta\,\hat{\bm{r}} + \sin\theta\,\hat{\bm{\theta}}
+\right),
+\end{equation}
+where \(R_E\) is the Earth's radius and \(B_0\) is a characteristic surface field strength.
+
+The field lines satisfy
+\begin{equation}
+r = L \sin^2\theta,
+\label{eq:dipoleline}
+\end{equation}
+where \(L\) labels a magnetic shell. This relation is used conceptually in the 3D visualization to draw magnetic field lines around the Earth and to suggest a magnetospheric geometry.
+
+\subsection{Auroral oval}
+Auroral emission is concentrated in an annular region near the magnetic poles, commonly called the auroral oval. The visualization in the script models this as a band near high magnetic latitude. Mathematically, one may view the auroral region as a narrow set in spherical coordinates:
+\begin{equation}
+\theta \approx \theta_0 \pm \delta\theta,
+\end{equation}
+with \(\theta_0\) corresponding to a high-latitude magnetic colatitude.
+
+A simple parameterization of a colored auroral surface in three dimensions is
+\begin{align}
+x &= r(\theta,\phi)\sin\theta\cos\phi, \\
+y &= r(\theta,\phi)\sin\theta\sin\phi, \\
+z &= r(\theta,\phi)\cos\theta,
+\end{align}
+where \(r(\theta,\phi)\) is a perturbed radius capturing waviness and temporal fluctuation.
+
+\subsection{Particle motion along field lines}
+Auroral electrons experience the Lorentz force
+\begin{equation}
+m_e \frac{d\bm{v}}{dt} = -e\left(\bm{E} + \bm{v}\times\bm{B}\right).
+\end{equation}
+When the magnetic field is strong compared with electric effects, particle motion decomposes into:
+\begin{itemize}
+    \item fast gyromotion around field lines,
+    \item guiding-center motion along field lines,
+    \item slow drifts across field lines.
+\end{itemize}
+This is the physical mechanism behind field-aligned precipitation that creates auroral arcs.
+
+The first adiabatic invariant,
+\begin{equation}
+\mu = \frac{m v_\perp^2}{2B},
+\end{equation}
+is approximately conserved when the magnetic field varies slowly along the particle trajectory. As \(B\) increases toward the Earth, \(v_\perp\) increases and the parallel velocity may decrease, producing magnetic mirroring.
+
+% ------------------------------------------------------------
+\section{Optical Origin of the Northern Lights}
+
+Auroral light is generated when energetic particles collide with atmospheric species such as atomic oxygen and molecular nitrogen. Excitation followed by radiative decay produces characteristic colors:
+\begin{itemize}
+    \item green and red emission from oxygen,
+    \item blue and purple emission from nitrogen and ionized nitrogen.
+\end{itemize}
+
+If \(N_i\) denotes an excited state population, a simple radiative decay model is
+\begin{equation}
+\frac{dN_i}{dt} = -\frac{N_i}{\tau_i},
+\end{equation}
+with solution
+\begin{equation}
+N_i(t) = N_i(0)e^{-t/\tau_i},
+\end{equation}
+where \(\tau_i\) is the lifetime of the excited state. The observed brightness is proportional to the emitted photon rate and the local excitation rate, which depend on precipitating particle flux.
+
+A schematic intensity function for the aurora can be written as
+\begin{equation}
+I(\phi,t) = I_0 \left[1 + a\sin(k\phi - \omega t + \delta)\right],
+\end{equation}
+which resembles the oscillatory patterns used in the script to create a flowing auroral curtain.
+
+% ------------------------------------------------------------
+\section{Connection to the Python Visualization Script}
+
+\subsection{Two-dimensional visual report}
+The script constructs a two-dimensional representation of plasma and auroral structure through a color-mapped field and a cloud of particles. In abstract terms, one may interpret the plotted scalar field as a proxy for a plasma observable such as density \(n(t,\bm{x})\), current magnitude \(\abs{\bm{J}}\), or wave intensity.
+
+If a field \(F(x,y,t)\) is shown with a colormap, then the visualized quantity is often rendered as
+\begin{equation}
+F(x,y,t) \mapsto \text{color}(F),
+\end{equation}
+with dynamic variation governed by time-dependent perturbations. The animated update step in the script corresponds to the numerical evolution of a discretized or stylized version of \(F\).
+
+\subsection{Three-dimensional magnetosphere}
+The 3D section uses:
+\begin{itemize}
+    \item a sphere to represent the Earth,
+    \item dipole-like field lines approximated by \eqref{eq:dipoleline},
+    \item a point cloud for auroral particles,
+    \item a rotating viewpoint to simulate orbital observation.
+\end{itemize}
+
+The animation updates the viewing angle, which can be described by a time-dependent camera map
+\begin{equation}
+\mathcal{V}(t) = (\text{elev}(t), \text{azim}(t)).
+\end{equation}
+This does not change the physical system itself, but enhances the perception of 3D structure and plasma geometry.
+
+\subsection{Stochastic perturbations}
+The script introduces randomness to auroral particle placement and intensity, which can be interpreted as a Monte Carlo-like visualization of a turbulent plasma structure. If the auroral cloud consists of points \(\{\bm{x}_j\}_{j=1}^N\), then an empirical distribution may be written as
+\begin{equation}
+f_N(\bm{x}) = \frac{1}{N}\sum_{j=1}^N \delta(\bm{x} - \bm{x}_j).
+\end{equation}
+Smooth appearance is obtained by assigning colors and sizes according to a random or quasi-random intensity field.
+
+% ------------------------------------------------------------
+\section{Energy, Momentum, and Conservation Laws}
+
+A major advantage of the Vlasov--Maxwell system is that it respects fundamental conservation laws. The total energy is
+\begin{equation}
+\mathcal{E}(t)
+=
+\sum_s \int_{\mathbb{R}^3}\int_{\mathbb{R}^3}
+\frac{1}{2}m_s \abs{\bm{v}}^2 f_s\,d^3v\,d^3x
++
+\frac{\varepsilon_0}{2}\int_{\mathbb{R}^3}\abs{\bm{E}}^2\,d^3x
++
+\frac{1}{2\mu_0}\int_{\mathbb{R}^3}\abs{\bm{B}}^2\,d^3x.
+\end{equation}
+Under suitable boundary conditions, \(\mathcal{E}(t)\) is conserved.
+
+Similarly, one may derive momentum conservation and an entropy-like phase-space incompressibility property from the Vlasov equation. These conservation principles are essential when interpreting long-time plasma dynamics and magnetospheric stability.
+
+% ------------------------------------------------------------
+\section{Numerical and Visual Considerations}
+
+Although the script is primarily designed for artistic-scientific visualization rather than first-principles simulation, several mathematical ideas are embedded in its construction:
+\begin{enumerate}[label=(\arabic*)]
+    \item \textbf{Parameterization of geometry:} spherical coordinates for the Earth and auroral bands.
+    \item \textbf{Random sampling:} pseudo-random particles approximate phase-space ensembles.
+    \item \textbf{Time dependence:} periodic modulation mimics plasma oscillations and auroral waving.
+    \item \textbf{Projection and viewing transformation:} 3D scenes are rendered from time-varying viewpoints.
+    \item \textbf{Colormap encoding:} physical intensity is converted to visual color and opacity.
+\end{enumerate}
+
+If one wished to move toward a more rigorous numerical Vlasov--Maxwell solver, one would discretize phase space, advance \(f_s\) via a semi-Lagrangian, particle-in-cell, or finite-volume method, and update \(\bm{E}\) and \(\bm{B}\) using Maxwell-consistent field solvers.
+
+% ------------------------------------------------------------
+\section{Interpretation of the Poster Figures}
+
+The file \texttt{vlasov\_maxwell\_aurora\_poster.png} may be included as a planar visual summary of the plasma field and auroral appearance, while \texttt{vlasov\_maxwell\_aurora\_3d\_poster.png} provides a three-dimensional magnetospheric rendering.
+
+Insert them in Overleaf as follows:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{vlasov_maxwell_aurora_poster.png}
+    \caption{Two-dimensional auroral and plasma visualization inspired by the Vlasov--Maxwell framework.}
+    \label{fig:poster2d}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{vlasov_maxwell_aurora_3d_poster.png}
+    \caption{Three-dimensional rotating magnetosphere with field lines and auroral emission.}
+    \label{fig:poster3d}
+\end{figure}
+
+These figures connect mathematical theory with phenomenological visualization.
+
+% ------------------------------------------------------------
+\section{Limitations and Extensions}
+
+The report and accompanying script are illustrative rather than predictive. Important physical effects not fully modeled include:
+\begin{itemize}
+    \item ionospheric conductivity,
+    \item wave-particle interactions,
+    \item collisions in the upper atmosphere,
+    \item anisotropic temperature distributions,
+    \item realistic geomagnetic field distortion by solar wind,
+    \item coupling to global magnetohydrodynamic scales.
+\end{itemize}
+
+Possible extensions include:
+\begin{itemize}
+    \item coupling to the Lorentz force with realistic trajectories,
+    \item incorporating a dipole-plus-tilt magnetic field,
+    \item adding field-aligned acceleration potentials,
+    \item solving a reduced Vlasov or gyrokinetic model,
+    \item using measured auroral data for parameter calibration.
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{Conclusion}
+The Vlasov--Maxwell system provides a natural and mathematically elegant description of collisionless plasma behavior in the Earth's magnetosphere. In the auroral context, it explains how charged particles evolve under electromagnetic forces, how field-aligned transport leads to polar precipitation, and how interactions with the atmosphere create the visible northern lights. The Python script accompanying this report translates these ideas into a visual and pedagogical form by combining phase-space-inspired patterns, dipole geometry, auroral color fields, and rotating 3D magnetospheric graphics.
+
+Although simplified, the visualizations capture several essential mathematical structures: nonlinear coupling between distribution functions and fields, dipole field-line topology, stochastic particle ensembles, and periodic temporal modulation. This makes the project a useful bridge between kinetic plasma theory and scientific visualization.
+
+% ------------------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem{Nicholson}
+D. R. Nicholson,
+\textit{Introduction to Plasma Theory},
+Wiley, 1983.
+
+\bibitem{KrallTrivelpiece}
+N. A. Krall and A. W. Trivelpiece,
+\textit{Principles of Plasma Physics},
+McGraw--Hill, 1973.
+
+\bibitem{Chen}
+F. F. Chen,
+\textit{Introduction to Plasma Physics and Controlled Fusion},
+3rd ed., Springer, 2016.
+
+\bibitem{SchulzLanzerotti}
+M. Schulz and L. J. Lanzerotti,
+\textit{Particle Diffusion in the Radiation Belts},
+Springer, 1974.
+
+\bibitem{KivelsonRussell}
+M. G. Kivelson and C. T. Russell (eds.),
+\textit{Introduction to Space Physics},
+Cambridge University Press, 1995.
+
+\bibitem{BaumjohannTreumann}
+W. Baumjohann and R. A. Treumann,
+\textit{Basic Space Plasma Physics},
+Imperial College Press, 1996.
+
+\bibitem{Akasofu}
+S.-I. Akasofu,
+\textit{Auroral Physics},
+University of Alaska Press, 1981.
+
+\bibitem{Walker}
+M. A. Walker,
+``Auroral precipitation and magnetospheric particle transport,''
+\textit{Space Science Reviews}, various foundational studies on auroral physics.
+
+\bibitem{Parker}
+E. N. Parker,
+\textit{Interplanetary Dynamical Processes},
+Interscience, 1963.
+
+\bibitem{Landau}
+L. D. Landau and E. M. Lifshitz,
+\textit{The Classical Theory of Fields},
+Butterworth--Heinemann, 1975.
+
+\end{thebibliography}
+
+\end{document}
